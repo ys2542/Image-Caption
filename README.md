@@ -8,6 +8,10 @@ Yiyan Chen
 
 MSCOCO Dataset
 
+```bash
+$ ./data.sh   
+```
+
 ### Prerequisites
 
 Python 3.6 for train and output \
