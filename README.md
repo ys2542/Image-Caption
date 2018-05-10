@@ -2,7 +2,7 @@
 
 Yulin Shen \
 Shenghui Zhou \
-Yiyan Chen \
+Yiyan Chen 
 
 ## Getting Started
 
@@ -10,15 +10,15 @@ MSCOCO Dataset
 
 ### Prerequisites
 
-Python 3.6 for train and output
-Python 2.7 for eval(API use version2.7)
+Python 3.6 for train and output \
+Python 2.7 for eval(API use version2.7) \
 Pytorch
 
 
 ## Example
 
-LSTM18.txt is the output(resnet18 + LSTM)
-sort_caption.txt is the annotation for val image set, I extract it for eval.
+LSTM18.txt is the output(resnet18 + LSTM) \
+sort_caption.txt is the annotation for val image set, I extract it for eval. \
 eval_lstm18.txt is the bleu scores.
 
 ### Command
