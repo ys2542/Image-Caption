@@ -1,8 +1,8 @@
 # Image Caption
 
-Yulin Shen
-Shenghui Zhou
-Yiyan Chen
+Yulin Shen \
+Shenghui Zhou \
+Yiyan Chen \
 
 ## Getting Started
 
