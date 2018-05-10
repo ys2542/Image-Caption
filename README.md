@@ -21,8 +21,9 @@ Pytorch
 
 ## Example
 
-LSTM18.txt is the output(resnet18 + LSTM) \
-sort_caption.txt is the annotation for val image set, I extract it for eval. \
+LSTM18.out is the loss and perplexity in train process. \
+LSTM18.txt is the val image caption result for the models resnet18 and LSTM. \
+sort_caption.txt is the annotation for val image set, I extract it for our eval code. \
 eval_lstm18.txt is the bleu scores.
 
 ### Command
