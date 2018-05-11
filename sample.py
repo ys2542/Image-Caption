@@ -12,9 +12,10 @@ from PIL import Image
 from os import listdir
 from os.path import isfile, join
 
-def to_var(x, volatile=False):
+def to_var(x, volatile=False): # wrap the tensor
     if torch.cuda.is_available():
         x = x.cuda()
+        
     return Variable(x, volatile=volatile)
 
 def load_image(image_path, transform=None):
