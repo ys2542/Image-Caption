@@ -4,35 +4,54 @@ Yulin Shen \
 Shenghui Zhou \
 Yiyan Chen 
 
+## Prerequisites
+
+Python 3.6 for Model \
+Python 2.7 for Evaluation(COCOAPI use version2.7) \
+Pytorch
+
+## Folder Description
+
+Model: all python files to do image caption \
+Evaluation: evaluate the result produced by Model to get bleu scores \
+Score: 9 combinations of models bleu scores outputs \
+Result: predicted captions of 9 combinations of models using val image set \
+Train: loss and perplexity in the train process in 9 combinations of models
+
 ## Getting Started
 
-MSCOCO Dataset
-
+In Model folder: \
+Step 1: get COCO Dataset at first
 ```bash
 $ ./data.sh   
 ```
-
-### Prerequisites
-
-Python 3.6 for train and output \
-Python 2.7 for eval(API use version2.7) \
-Pytorch
-
-
-## Example
-
-LSTM18.out is the loss and perplexity in train process. \
-LSTM18.txt is the val image caption result for the models resnet18 and LSTM. \
-sort_caption.txt is the annotation for val image set, I extract it for our eval code. \
-eval_lstm18.txt is the bleu scores.
-
-### Command
-
+Step 2: get annation wrapper pickle file
 ```bash
-$ python build_vocab.py   
-$ python resize.py
-$ python train.py
-$ python sample.py
-$ python create_json_references.py -i sort_caption.txt -o sort_caption.json
-$ python run_evaluations.py -i LSTM18.txt -r sort_caption.json
+$ python build_vocab.py 
 ```
+Step 3: resize all images in train image set
+```bash
+$ python resize.py 
+```
+Step 4: train the model
+```bash
+$ python train.py 
+```
+Step 5: get predicted result of val image set
+```bash
+$ python sample.py 
+```
+Notice: change the paths(model setting pickle file, annation pickle file, image sets folder) in each file \
+
+In Evaluation foler: \
+Step 1: I have already extracted all necessray information in the val annotation json file to a new txt file called sort_caption.txt \
+Step 2: convert sort_caption.txt into a new annotation json to fit our evaluation format 
+```bash
+$ python create_json_references.py -i ./sort_caption.txt -o ./sort_caption.json 
+```
+Step 3: choose a result txt file in Result folder to get its bleu score
+```bash
+python run_evaluations.py -i ../Result/LSTM152_Result.txt -r ./sort_caption.json
+```
+
+
