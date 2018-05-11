@@ -4,16 +4,19 @@ from PIL import Image
 
 
 def resize_image(image, size):
-    """Resize an image to the given size."""
+    
+    # resize an image
     return image.resize(size, Image.ANTIALIAS)
 
 def resize_images(image_dir, output_dir, size):
-    """Resize the images in 'image_dir' and save into 'output_dir'."""
-    if not os.path.exists(output_dir):
+    
+    if not os.path.exists(output_dir): # path to store resized images
         os.makedirs(output_dir)
 
-    images = os.listdir(image_dir)
-    num_images = len(images)
+    images = os.listdir(image_dir) # load images
+    num_images = len(images) # number of total images
+    
+    # resize total images
     for i, image in enumerate(images):
         with open(os.path.join(image_dir, image), 'r+b') as f:
             with Image.open(f) as img:
@@ -24,13 +27,8 @@ def resize_images(image_dir, output_dir, size):
                    %(i, num_images, output_dir))
 
 def main(args):
-    splits = ['train', 'val']
-    for split in splits:
-        image_dir = args.image_dir
-        output_dir = args.output_dir
-        image_size = [args.image_size, args.image_size]
-        resize_images(image_dir, output_dir, image_size)
-
+    
+    resize_images(args.image_dir, args.output_dir, [args.image_size, args.image_size])
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
