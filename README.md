@@ -1,8 +1,8 @@
 # Image Caption
 
-Yulin Shen \
-Shenghui Zhou \
-Yiyan Chen 
+Yulin Shen ys2542 \
+Shenghui Zhou sz2396 \
+Yiyan Chen yc2462
 
 ## Prerequisites
 
