@@ -14,6 +14,7 @@ from torchvision import transforms
 def to_var(x, volatile=False): # wrap the tensor
     if torch.cuda.is_available():
         x = x.cuda()
+        
     return Variable(x, volatile=volatile)
     
 def main(args):
