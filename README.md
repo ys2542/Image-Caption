@@ -22,7 +22,7 @@ Train: loss and perplexity in the train process in 9 combinations of models
 
 ## Getting Started
 
-In Model folder: 
+### In Model folder: 
 
 Step 1: get COCO Dataset at first
 ```bash
@@ -46,7 +46,7 @@ $ python sample.py
 ```
 Notice: change the paths(model setting pickle file, annation pickle file, image sets folder) in each file 
 
-In Evaluation foler: 
+### In Evaluation foler: 
 
 Step 1: get COCOAPI
 ```bash
