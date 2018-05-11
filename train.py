@@ -11,18 +11,17 @@ from torch.autograd import Variable
 from torch.nn.utils.rnn import pack_padded_sequence
 from torchvision import transforms
 
-def to_var(x, volatile=False):
+def to_var(x, volatile=False): # wrap the tensor
     if torch.cuda.is_available():
         x = x.cuda()
     return Variable(x, volatile=volatile)
     
 def main(args):
-    # Create model directory
-    if not os.path.exists(args.model_path):
+    
+    if not os.path.exists(args.model_path): # # create model folder to keep model setting pickle files
         os.makedirs(args.model_path)
     
-    # Image preprocessing
-    # For normalization, see https://github.com/pytorch/vision#models
+    # image preprocessing and normailzation
     transform = transforms.Compose([ 
         transforms.RandomCrop(args.crop_size),
         transforms.RandomHorizontalFlip(), 
@@ -30,55 +29,52 @@ def main(args):
         transforms.Normalize((0.485, 0.456, 0.406), 
                              (0.229, 0.224, 0.225))])
     
-    # Load vocabulary wrapper.
     with open(args.vocab_path, 'rb') as f:
-        vocab = pickle.load(f)
+        vocab = pickle.load(f) # load vocabulary wrapper file
     
-    # Build data loader
+    # get data loader
     data_loader = get_loader(args.image_dir, args.caption_path, vocab, 
                              transform, args.batch_size,
                              shuffle=True, num_workers=args.num_workers) 
 
-    # Build the models
-    encoder = EncoderCNN(args.embed_size)
-    decoder = DecoderRNN(args.embed_size, args.hidden_size, 
-                         len(vocab), args.num_layers)
+    encoder = EncoderCNN(args.embed_size) # build encoder
+    decoder = DecoderRNN(args.embed_size, args.hidden_size, len(vocab), args.num_layers) # build decoder
     
-    if torch.cuda.is_available():
+    if torch.cuda.is_available(): # load GPU
         encoder.cuda()
         decoder.cuda()
 
-    # Loss and Optimizer
-    criterion = nn.CrossEntropyLoss()
+    criterion = nn.CrossEntropyLoss() # get loss
     params = list(decoder.parameters()) + list(encoder.linear.parameters()) + list(encoder.bn.parameters())
-    optimizer = torch.optim.Adam(params, lr=args.learning_rate)
+    optimizer = torch.optim.Adam(params, lr=args.learning_rate) # get optimization
     
-    # Train the Models
+    # train the Models
     total_step = len(data_loader)
     for epoch in range(args.num_epochs):
         for i, (images, captions, lengths) in enumerate(data_loader):
             
-            # Set mini-batch dataset
+            # set mini batch dataset
             images = to_var(images, volatile=True)
             captions = to_var(captions)
             targets = pack_padded_sequence(captions, lengths, batch_first=True)[0]
             
-            # Forward, Backward and Optimize
+            # forward and backward
             decoder.zero_grad()
             encoder.zero_grad()
             features = encoder(images)
             outputs = decoder(features, captions, lengths)
             loss = criterion(outputs, targets)
             loss.backward()
-            optimizer.step()
+            
+            optimizer.step() # optimization
 
-            # Print log info
+            # Print loss and perplexity
             if i % args.log_step == 0:
                 print('Epoch [%d/%d], Step [%d/%d], Loss: %.4f, Perplexity: %5.4f'
                       %(epoch, args.num_epochs, i, total_step, 
                         loss.data[0], np.exp(loss.data[0]))) 
                 
-            # Save the models
+            # save the models pickle file settings
             if (i+1) % args.save_step == 0:
                 torch.save(decoder.state_dict(), 
                            os.path.join(args.model_path, 
@@ -88,6 +84,7 @@ def main(args):
                                         'encoder-%d-%d.pkl' %(epoch+1, i+1)))
                 
 if __name__ == '__main__':
+    # set default path and parameter for tuning
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_path', type=str, default='./models/' ,
                         help='path for saving trained models')
