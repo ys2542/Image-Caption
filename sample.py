@@ -18,7 +18,7 @@ def to_var(x, volatile=False): # wrap the tensor
         
     return Variable(x, volatile=volatile)
 
-def load_image(image_path, transform=None):
+def load_image(image_path, transform=None): # load the image and resize it
     image = Image.open(image_path)
     image = image.resize([224, 224], Image.LANCZOS)
     
@@ -32,50 +32,43 @@ def main(args):
     filepath = '/scratch/ys2542/pytorch-tutorial/tutorials/03-advanced/image_captioning/data/resizedval2014'
     onlyfiles = [fl for fl in listdir(filepath) if isfile(join(filepath, fl))]
 
-    # Image preprocessing
-    transform = transforms.Compose([
-        transforms.ToTensor(), 
-        transforms.Normalize((0.485, 0.456, 0.406), 
-                             (0.229, 0.224, 0.225))])
+    # image preprocessing
+    transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))])
     
-    # Load vocabulary wrapper
+    # load vocabulary wrapper pickle file 
     with open(args.vocab_path, 'rb') as f:
         vocab = pickle.load(f)
 
-    # Build Models
-    encoder = EncoderCNN(args.embed_size)
-    encoder.eval()  # evaluation mode (BN uses moving mean/variance)
-    decoder = DecoderRNN(args.embed_size, args.hidden_size, 
-                         len(vocab), args.num_layers)
+    encoder = EncoderCNN(args.embed_size) # build encoder
+    encoder.eval() # evaluation mode by moving mean and variance
+    decoder = DecoderRNN(args.embed_size, args.hidden_size, len(vocab), args.num_layers) # build decoder
     
-
-    # Load the trained model parameters
+    # load the trained CNN and RNN parameters
     encoder.load_state_dict(torch.load(args.encoder_path))
     decoder.load_state_dict(torch.load(args.decoder_path))
     
-    # Load image
+    # Load all images in val folder
     for i in onlyfiles:
-        #print(i)
-        badsize = 0
-        args_image = filepath + '/'
+ 
+        badsize = 0 # count the unload images
+        args_image = filepath + '/' # val folder path with image names
         args_image = args_image + i
 
-        # Prepare Image
+        # transform image and wrap it to tensor
         image = load_image(args_image, transform)
         image_tensor = to_var(image, volatile=True)
     
-        # If use gpu
-        if torch.cuda.is_available():
+        if torch.cuda.is_available(): # load GPU
             encoder.cuda()
             decoder.cuda()
     
-            # Generate caption from image
+            # generate caption from image
             try:
                 feature = encoder(image_tensor)
                 sampled_ids = decoder.sample(feature)
                 sampled_ids = sampled_ids.cpu().data.numpy()
     
-                # Decode word_ids to words
+                # decode word_ids to words
                 sampled_caption = []
                 for word_id in sampled_ids:
                     word = vocab.idx2word[word_id]
@@ -84,17 +77,14 @@ def main(args):
                         break
                 sentence = ' '.join(sampled_caption)
     
-                # Print out image and generated caption.
+                # print out image and generated caption without start and end
                 print ('beam_size_1' + '\t' + i + '\t' + sentence[8:-8])
-                #image = Image.open(args.image)
-                #plt.imshow(np.asarray(image))
+
             except:
-                badsize = badsize + 1
+                badsize = badsize + 1 # count some wrong images
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    #parser.add_argument('--image', type=str, required=True,
-                        #help='input image for generating caption')
     parser.add_argument('--encoder_path', type=str, default='./models/encoder-5-3000.pkl',
                         help='path for trained encoder')
     parser.add_argument('--decoder_path', type=str, default='./models/decoder-5-3000.pkl',
@@ -102,7 +92,7 @@ if __name__ == '__main__':
     parser.add_argument('--vocab_path', type=str, default='/scratch/ys2542/pytorch-tutorial/tutorials/03-advanced/image_captioning/data/vocab.pkl',
                         help='path for vocabulary wrapper')
     
-    # Model parameters (should be same as paramters in train.py)
+    # same hyperparameter with train
     parser.add_argument('--embed_size', type=int , default=256,
                         help='dimension of word embedding vectors')
     parser.add_argument('--hidden_size', type=int , default=512,
