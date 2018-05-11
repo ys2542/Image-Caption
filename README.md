@@ -51,7 +51,7 @@ $ python create_json_references.py -i ./sort_caption.txt -o ./sort_caption.json
 ```
 Step 3: choose a result txt file in Result folder to get its bleu score
 ```bash
-python run_evaluations.py -i ../Result/LSTM152_Result.txt -r ./sort_caption.json
+$ python run_evaluations.py -i ../Result/LSTM152_Result.txt -r ./sort_caption.json
 ```
 
 
