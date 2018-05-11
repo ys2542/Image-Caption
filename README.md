@@ -46,8 +46,6 @@ Notice: change the paths(model setting pickle file, annation pickle file, image 
 
 In Evaluation foler: 
 
-Notice: I have already extracted all necessray information in the val annotation json file to a new txt file called sort_caption.txt
-
 Step 1: get COCOAPI
 ```bash
 $ ./COCOAPI.sh 
@@ -60,5 +58,12 @@ Step 3: choose a result txt file in Result folder to get its bleu score
 ```bash
 $ python run_evaluations.py -i ../Result/LSTM152_Result.txt -r ./sort_caption.json
 ```
+Notice: 
+
+Thanks for [vsubhashin](https://github.com/vsubhashini/caption-eval) sharing us a general evaulation tools. We just need to convert the old annotation json file into a new txt file with image name and its caption.
+
+I have already extracted all necessray information in the val annotation json file to a new txt file called sort_caption.txt, if you need to know how to convert it, please check convert.py in the Evaluation folder for reference.
+
+
 
 
