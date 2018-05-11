@@ -1,5 +1,7 @@
 # Image Caption
 
+We use 3 different layers pretrained resnet CNN models with 3 different kinds of RNN(Elman, GRU, LSTM) to get 9 combinations. We compare their results by bleu scores.
+
 ## Team members:
 
 Yulin Shen(ys2542) \
